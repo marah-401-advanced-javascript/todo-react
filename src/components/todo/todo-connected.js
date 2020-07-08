@@ -1,8 +1,10 @@
+/* eslint-disable no-unused-vars */
+
 import React, { useEffect, useState, useContext } from 'react';
 import TodoForm from '../form/form.js';
 import TodoList from '../list/list.js';
 import useAjax from '../../hooks/use-ajax.js';
-import { TodoContext } from '../../context/todo-context';
+import TodoContext from '../../context/todo-context';
 import './todo.scss';
 const axios = require('axios').default;
 
@@ -12,8 +14,10 @@ const todoAPI = 'https://todo-app-server-lab32.herokuapp.com/api/v1/todo';
 const ToDo = () => {
 
   const [list, setList] = useState([]);
+
   ///////////////////////////
   const todoContext = useContext(TodoContext);
+  // static contextType = TodoContext;
   /////////////////////////////
 
   //ADDIND NOTE >>> POST 

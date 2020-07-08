@@ -1,27 +1,52 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 //Creating context
 export const SettingsContext = React.createContext();
 
-function SettingsProvider(props) {
-  const [displayCompleted, setDisplayCompleted] = useState(false);
-  const [displayNumber, setDisplayNumber] = useState(3);
-  const [sortField, setsortField] = useState('difficulty');
+class SettingsProvider extends React.Component  {
+  
+  constructor(props) {
+    super(props);
 
-  const state = {
-    displayCompleted,
-    displayNumber,
-    sortField,
-    changeDisplayCompleted: setDisplayCompleted,
-    changeDisplayNumber: setDisplayNumber,
-    changSortField: setsortField,
+    this.state = {
+      displayCompleted:false,
+      currentPage: 1,
+      totalPages: 1,
+      itemsPerPage: 3,
+      sortField:'difficulty',
+      changeDisplayCompleted: this.changeDisplayCompleted,
+      changeItemsPerPage: this.changeItemsPerPage,
+      changeCurrentPageInc: this.changeCurrentPageInc,
+      changeCurrentPageDec: this.changeCurrentPageDec,
+      changeSortField: this.changeSortField,
+      changeTotalPages: this.changeTotalPages,
+    };
+
+  }
+  
+   changeCurrentPageInc = () => {
+     this.setState({ currentPage: (this.state.currentPage += 1) });
+   };
+
+   changeCurrentPageDec = () => {
+     this.setState({ currentPage: (this.state.currentPage -= 1) });
+   };
+
+   changeTotalPages = () => {
+     this.setState({ totalPages: (this.state.totalPages += 1) });
+   };
+
+  changeDisplayCompleted = () =>{
+    this.setState({displayCompleted: (this.state.displayCompleted = true)});
   };
 
-  return (
-    <SettingsContext.Provider value={state}>
-      {props.children}
-    </SettingsContext.Provider>
-  );
+  render() {
+    return (
+      <SettingsContext.Provider value={this.state}>
+        {this.props.children}
+      </SettingsContext.Provider>
+    );
+  }
 }
 
 export default SettingsProvider;
