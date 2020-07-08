@@ -1,27 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import TodoForm from '../form/form.js';
 import TodoList from '../list/list.js';
 import useAjax from '../../hooks/use-ajax.js';
+import { SettingsContext } from '../../context/todo-context';
 import './todo.scss';
-const axios = require('axios').default;
 
 const todoAPI = 'https://todo-app-server-lab32.herokuapp.com/api/v1/todo';
-// const todoAPI = 'https://lab-32.herokuapp.com/todo';
 
 const ToDo = () => {
 
   const [list, setList] = useState([]);
+  const todoContext = useContext(SettingsContext);
 
-  //ADDIND NOTE >>> POST 
+
+  // POST new task
   const _addItem = (item) => {
     item.due = new Date();
-   
-    // axios({
-    //   method: 'post',
-    //   url: todoAPI,
-    //   headers: { 'Content-Type': 'application/json' },
-    //   data: JSON.stringify(item),
-    // })
     let url = todoAPI;
     let method = 'post';
     useAjax(url, method, item)
@@ -33,19 +27,12 @@ const ToDo = () => {
       .catch(console.error);
   };
 
-  //COMPLETED >>> PUT
+
+  // PUT COMPLETED tasks
   const _toggleComplete = id => {
     let item = list.filter(i => i._id === id)[0] || {};
-    // if (item._id) {
     const itemComplete = JSON.parse(item.complete);
     item.complete = !((itemComplete));
-     
-    // axios({
-    //   method: 'put',
-    //   url: `${todoAPI}/${id}`,
-    //   headers: { 'Content-Type': 'application/json' },
-    //   data: JSON.stringify(item),
-    // })
     let url = `${todoAPI}/${id}`;
     let method = 'put';
     useAjax(url,method, item, item._id)
@@ -54,21 +41,15 @@ const ToDo = () => {
       .then(savedItem => {
         setList(list.map(listItem => listItem._id === item._id ? savedItem : listItem));
         console.log(list.map(listItem => listItem._id === item._id ? savedItem : listItem));
+        _getTodoItems();
       })
       .catch(console.error);
-    // }
   };
 
-  //DELETE NOTE >>> DELETE
+
+  //DELETE tasks
   const _deleteItem = id => {
     let item = list.filter(i => i._id === id)[0] || {};
-    // if (item._id) {
-     
-    // axios({
-    //   method: 'delete',
-    //   url: `${todoAPI}/${id}`,
-    //   headers: { 'Content-Type': 'application/json' },
-    // })
     let url = `${todoAPI}/${id}`;
     let  method= 'delete';
     useAjax(url, method, item, item._id)
@@ -76,22 +57,32 @@ const ToDo = () => {
       .then(response => response.data)
       .then(deletedItem => {
         console.log(deletedItem);
-        // setList(list.map(listItem => listItem._id === item._id ? savedItem : listItem));
         _getTodoItems();
       })
       .catch(console.error);
-    // }
   };
   
 
-  //NOTES LIST >>> GET
+  // GETTING only pending tasks
   const _getTodoItems = () => {
- 
-    // axios({
-    //   method: 'get',
-    //   url: todoAPI,
-    //   headers: { 'Content-Type': 'application/json' },
-    // })
+    let url = todoAPI;
+    let method = 'get';
+    let pendingArr=[];
+    useAjax(url, method)
+      .then(response => response.data)
+      .then(data => {
+        const pending = data.map(item =>{
+          return item.complete === false? pendingArr.push(item) : {};
+        });
+        setList(pendingArr);
+        console.log(pendingArr);
+      })
+      .catch(console.error);
+  };
+
+
+  // GETTING all tasks 
+  const _getAllTodoItems = () => {
     let url = todoAPI;
     let method = 'get';
     useAjax(url, method)
@@ -104,6 +95,20 @@ const ToDo = () => {
       .catch(console.error);
   };
 
+  // SORTING the list regarding the difficulty
+  list.sort((a, b) => {
+    return Number(a.difficulty) - Number(b.difficulty);
+  });
+
+  // FOR PAGINATION 
+  const indexOfLastItem = todoContext.currentPage * todoContext.itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - todoContext.itemsPerPage;
+  const currentPagePosts = list.slice(indexOfFirstItem, indexOfLastItem);  //passing this var to the list component as a list 
+  const numberOfPages = (list.length) / (todoContext.itemsPerPage);
+  todoContext.changeTotalPages(numberOfPages);
+
+  
+  //After rendering get the tasks 
   useEffect(_getTodoItems, []);
 
   return (
@@ -125,7 +130,7 @@ const ToDo = () => {
           </div>
 
           <div>
-            <TodoList list={list} handleComplete={_toggleComplete} handleDelete={_deleteItem} />
+            <TodoList list={currentPagePosts} listAll={list} handleComplete={_toggleComplete} handleDelete={_deleteItem} handleShowCompleted={_getAllTodoItems} handleHideCompleted={_getTodoItems} />
           </div>
 
         </section>
@@ -135,7 +140,7 @@ const ToDo = () => {
     </>
   );
  
-  
+ 
 };
 
 export default ToDo;

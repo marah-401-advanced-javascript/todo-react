@@ -12,3 +12,5 @@ export const If = props =>
 
 export const Then = props => render(props.condition, props.children);
 export const Else = props => render(!props.condition, props.children);
+export const When = props => render(props.condition, props.children);
+export const Unless = props => render(!props.condition, props.children);
