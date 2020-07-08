@@ -7,7 +7,7 @@
 ### Links and Resources
 
 - [submission PR base](https://github.com/marah-401-advanced-javascript/todo-react/pull/1)
-- [deployed Application netlify](not yet)
+- [deployed Application netlify](https://todo-react-marah.netlify.app/)
 
 ### Modules
 
