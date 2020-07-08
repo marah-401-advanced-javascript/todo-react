@@ -1,26 +1,30 @@
-import React, { useState }  from 'react';
+import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import useForm from '../../hooks/use-form.js';
+// import { useState, useEffect } from 'react';
 
 function TodoForm (props){
-
-  const [item, setItem] = useState({});
   
-  const handleInputChange = e => {
-    setItem( {...item, [e.target.name]: e.target.value } );
-    console.log(item);
-  };
+  // MOVED THE STATE AND THE FUNCTIONS TO THE CUSTOM HOOK
+  /////////////////////////////////////////////////////////
+  // const [item, setItem] = useState({});
+  
+  // const handleInputChange = e => {
+  //   setItem( {...item, [e.target.name]: e.target.value , complete : false });
+  // };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    e.target.reset();
-    props.handleSubmit(item);
-    item && setItem({ ...item, item });
-  };
-
-
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   e.target.reset();
+  //   props.handleSubmit(item);
+  //   const emptyItem = {};
+  //   setItem(emptyItem);
+  //   // item && setItem({ ...item, item });
+  // };
+  ////////////////////////////////////////////////////////
+  const [item , handleInputChange, handleSubmit] = useForm(props);
 
   return (
     <>
@@ -48,8 +52,6 @@ function TodoForm (props){
       
     </>
   );
-
-
 }   
 
 export default TodoForm;
