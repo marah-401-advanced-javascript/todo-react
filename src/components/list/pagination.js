@@ -1,48 +1,35 @@
 import React from 'react';
+import { useContext } from 'react';
 import {SettingsContext} from '../../context/todo-context';
-import  {When}  from '../if/if';
 
-class Content extends React.Component {
+function Pagination(props){
 
-  constructor(props) {
-    super(props);
+  const todoContext = useContext(SettingsContext);
+  
+  const pageNumbers = [];
+  for(let i = 1; i <= Math.ceil(todoContext.totalPages); i++){
+    pageNumbers.push(i);
   }
 
-  static contextType = SettingsContext; //magical line
+  return(
+    <>
+      <div>Total items: {props.listAll.length}</div>
+      <div>Current page is {todoContext.currentPage}</div>
+      <div>Total pages:{Math.ceil(props.listAll.length / todoContext.itemsPerPage)}</div>
+      
+      <div>
+        {pageNumbers.map(number => (
+          <span key={number}>
+            <button onClick={() => todoContext.changeCurrentPage(number)} > 
+              {number}  
+            </button>
+          </span>
+        ))}
+      </div>
+    </>
+  );
 
-  render() {
-    return (
-      <>
-        <div className='bar'>
-
-          <div>Total items: {this.props.list.length}</div>
-          <div>Current page is {this.context.currentPage}</div>
-          <div>Total pages:{Math.ceil(this.props.list.length / this.context.itemsPerPage)}</div>
-          
-          <When condition={this.context.currentPage > 1}>
-            <input
-              type="button"
-              value="back"
-              onClick={this.context.changeCurrentPageDec}
-            />
-          </When>
-          <When
-            condition={
-              this.context.currentPage <
-              Math.floor(this.props.list.length / this.context.itemsPerPage)
-            }
-          >
-            <input
-              type="button"
-              value="next"
-              onClick={this.context.changeCurrentPageInc}
-            />
-          </When>
-        </div>
-      </>
-    );
-  }
 }
 
+export default Pagination;
 
-export default Content;

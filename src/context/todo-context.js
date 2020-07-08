@@ -1,56 +1,35 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 //Creating context
 export const SettingsContext = React.createContext();
 
-class SettingsProvider extends React.Component  {
+function SettingsProvider(props){
   
-  constructor(props) {
-    super(props);
+  const [displayCompleted, setDisplayCompleted] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
+  const [sortField, setSortField] = useState('difficulty');
 
-    this.state = {
-      displayCompleted:false,
-      currentPage: 1,
-      totalPages: 1,
-      itemsPerPage: 3,
-      sortField:'difficulty',
-      changeDisplayCompleted: this.changeDisplayCompleted,
-      changeItemsPerPage: this.changeItemsPerPage,
-      changeCurrentPageInc: this.changeCurrentPageInc,
-      changeCurrentPageDec: this.changeCurrentPageDec,
-      changeSortField: this.changeSortField,
-      changeTotalPages: this.changeTotalPages,
-    };
-
-  }
-  
-   changeCurrentPageInc = () => {
-     this.setState({ currentPage: (this.state.currentPage += 1) });
-   };
-
-   changeCurrentPageDec = () => {
-     this.setState({ currentPage: (this.state.currentPage -= 1) });
-   };
-
-   changeTotalPages = () => {
-     this.setState({ totalPages: (this.state.totalPages += 1) });
-   };
-
-  changeDisplayCompleted = () =>{
-    this.setState({displayCompleted: (this.state.displayCompleted = true)});
+  const state = {
+    displayCompleted,
+    currentPage,
+    totalPages,
+    itemsPerPage,
+    sortField,
+    changeDisplayCompleted: setDisplayCompleted,
+    changeItemsPerPage: setItemsPerPage,
+    changeCurrentPage: setCurrentPage,
+    changeSortField: setSortField,
+    changeTotalPages: setTotalPages,
   };
 
-  render() {
-    return (
-      <SettingsContext.Provider value={this.state}>
-        {this.props.children}
-      </SettingsContext.Provider>
-    );
-  }
+  return (
+    <SettingsContext.Provider value={state}>
+      {props.children}
+    </SettingsContext.Provider>
+  );
+  
 }
-
+  
 export default SettingsProvider;
-
-// Context  creating
-// Provider value = {state}
-// Consumer context.state
